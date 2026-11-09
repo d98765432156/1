@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10152f">
+  <title>水瓶座宇宙訊號</title>
+  <style>
+    :root{color-scheme:dark;--ink:#f8f4ff;--muted:#b8b7d3;--violet:#a995ff;--cyan:#8be9f4}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100svh;display:grid;place-items:center;padding:28px 18px;color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 50% 0%,#32285d 0%,#191d3e 38%,#0d1228 78%);overflow-x:hidden}
+    body:before,body:after{content:"";position:fixed;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:8vw 18vh #fff,18vw 76vh #d6cbff,30vw 12vh #fff,42vw 87vh #fff,55vw 20vh #c7f7ff,68vw 72vh #fff,79vw 10vh #fff,91vw 48vh #d6cbff,14vw 43vh #fff,86vw 89vh #fff;opacity:.7;pointer-events:none}
+    .wrap{width:min(100%,520px);position:relative}
+    .eyebrow{text-align:center;color:var(--cyan);font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;margin:0 0 13px}
+    h1{text-align:center;font-size:clamp(2rem,8vw,3.15rem);line-height:1.1;margin:0;font-weight:750;letter-spacing:.02em}
+    .intro{text-align:center;color:var(--muted);margin:15px auto 27px;line-height:1.75;max-width:360px;font-size:.96rem}
+    .panel{border:1px solid #ffffff24;border-radius:26px;padding:24px;background:linear-gradient(145deg,#ffffff12,#ffffff06);box-shadow:0 24px 80px #05081977;backdrop-filter:blur(12px)}
+    label{display:block;font-size:.83rem;color:#dcdaef;margin-bottom:9px}
+    .row{display:flex;gap:10px}
+    input{min-width:0;flex:1;border:1px solid #ffffff2c;border-radius:13px;background:#0d1226a8;color:var(--ink);padding:13px 14px;font:inherit;outline:none}
+    input:focus{border-color:var(--violet);box-shadow:0 0 0 3px #a995ff26}
+    button{font:inherit;cursor:pointer;border:0;border-radius:13px;padding:12px 16px;font-weight:700;transition:transform .18s,filter .18s}
+    button:hover{transform:translateY(-2px);filter:brightness(1.08)}
+    button:active{transform:translateY(0)}
+    .generate{color:#19142f;background:linear-gradient(135deg,#c6baff,#8cecf2);white-space:nowrap}
+    .card{display:none;margin-top:19px;padding:24px 22px;border-radius:19px;background:linear-gradient(145deg,#ded5ff,#b6eefa);color:#201b3b;position:relative;overflow:hidden;animation:rise .45s ease both}
+    .card.show{display:block}
+    .card:after{content:"✦";position:absolute;right:18px;top:9px;font-size:2rem;color:#ffffffa8}
+    .card small{display:block;color:#554c79;letter-spacing:.15em;font-weight:700;font-size:.69rem;margin-bottom:12px}
+    .card h2{font-size:1.45rem;margin:0 0 12px}
+    .card p{line-height:1.8;margin:0;font-size:1rem}
+    .card .sign{margin-top:15px;font-size:.82rem;color:#514b70}
+    .actions{display:none;gap:9px;margin-top:12px}
+    .actions.show{display:flex}
+    .actions button{flex:1;color:#e9e6ff;background:#ffffff12;border:1px solid #ffffff26;font-size:.88rem}
+    .hint{text-align:center;color:#8f91b5;font-size:.75rem;margin:18px 0 0}
+    .toast{min-height:1.2em;text-align:center;color:var(--cyan);font-size:.8rem;margin-top:10px}
+    @keyframes rise{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media(max-width:430px){.panel{padding:19px}.row{flex-direction:column}.generate{width:100%}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="eyebrow">A tiny message from the cosmos ✦</p>
+    <h1>水瓶座宇宙訊號</h1>
+    <p class="intro">輸入名字，讓 AI 幫你接收一則專屬訊號。<br>訊號有點神祕，心意倒是很真。</p>
+    <section class="panel" aria-label="生成專屬訊號">
+      <label for="name">收訊者的名字</label>
+      <div class="row">
+        <input id="name" type="text" maxlength="18" placeholder="例如：小安" autocomplete="off">
+        <button class="generate" id="generate">接收訊號 ✨</button>
+      </div>
+      <article class="card" id="card" aria-live="polite">
+        <small>✦ AQUARIUS TRANSMISSION · 01</small>
+        <h2 id="greeting"></h2>
+        <p id="message"></p>
+        <p class="sign" id="signature"></p>
+      </article>
+      <div class="actions" id="actions">
+        <button id="copy">複製這則訊號</button>
+        <button id="again">再接收一則</button>
+      </div>
+      <div class="toast" id="toast" role="status"></div>
+    </section>
+    <p class="hint">由 AI 協助生成靈感 · 由真人負責傳送 💫</p>
+  </main>
+  <script>
+    const notes = [
+      '宇宙剛剛收到一個有趣的新訊號：有人最近在學 AI，還把第一個小作品留給了你。看來你比演算法更會抓住他的注意力。',
+      '今日星際觀測：水瓶座的靈感值很高，某人的聊天勇氣也正在載入中。要不要給他一個提示，讓他知道這個企劃可以繼續？',
+      'AI 分析了星星、靈感和一點點心跳，結果是：這則訊號的收件人很特別。發件人想認識你，順便交換一些有趣的新點子。',
+      '宇宙推薦今日行程：找個有趣的話題，和一個讓人想多聊幾句的人分享。此訊號由 AI 協助解碼，發送理由由本人親自認領。',
+      '最新研究發現：當水瓶座遇上新點子，對話容易變得很好玩。發件人正在學 AI，下一個想研究的題目可能是「怎麼讓你笑一下」。'
+    ];
+    const nameInput = document.querySelector('#name');
+    const card = document.querySelector('#card');
+    const actions = document.querySelector('#actions');
+    const toast = document.querySelector('#toast');
+    let currentMessage = '';
+    let lastIndex = -1;
+    function receive(){
+      const name = nameInput.value.trim() || '水瓶座同學';
+      let index = Math.floor(Math.random()*notes.length);
+      if(notes.length>1 && index===lastIndex) index=(index+1)%notes.length;
+      lastIndex=index;
+      currentMessage = `給 ${name} 的宇宙訊號：${notes[index]}`;
+      document.querySelector('#greeting').textContent = `給 ${name} 的專屬訊號`;
+      document.querySelector('#message').textContent = notes[index];
+      document.querySelector('#signature').textContent = '— AI 協助生成，發送者本人簽收';
+      card.classList.remove('show');
+      requestAnimationFrame(()=>card.classList.add('show'));
+      actions.classList.add('show');
+      toast.textContent='';
+    }
+    document.querySelector('#generate').addEventListener('click', receive);
+    document.querySelector('#again').addEventListener('click', receive);
+    nameInput.addEventListener('keydown', e=>{if(e.key==='Enter')receive()});
+    document.querySelector('#copy').addEventListener('click', async()=>{
+      try { await navigator.clipboard.writeText(currentMessage); toast.textContent='已複製，可以傳給她了 ✨'; }
+      catch { toast.textContent='選取卡片文字即可複製，祝你傳訊順利 ✨'; }
+    });
+  </script>
+</body>
+</html>
+
